@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breakout Ball Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: white;
+        }
+
+        .game-container {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+
+        .info-item {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .score { color: #4ecdc4; }
+        .lives { color: #ff6b6b; }
+        .level { color: #45b7d1; }
+
+        canvas {
+            border: 3px solid #fff;
+            border-radius: 10px;
+            background: #000;
+            display: block;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .controls {
+            margin-top: 15px;
+            text-align: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+
+        .controls p {
+            margin: 5px 0;
+            font-size: 1.1em;
+        }
+
+        .game-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.5em;
+            border: 2px solid #fff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 10px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .game-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            canvas {
+                width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🎮 Breakout Ball Game</h1>
+        
+        <div class="game-info">
+            <div class="info-item score">
+                <div>Score</div>
+                <div id="score">0</div>
+            </div>
+            <div class="info-item lives">
+                <div>Lives</div>
+                <div id="lives">3</div>
+            </div>
+            <div class="info-item level">
+                <div>Level</div>
+                <div id="level">1</div>
+            </div>
+        </div>
+        
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        
+        <div class="controls">
+            <p>🖱️ <strong>Move:</strong> Mouse or Arrow Keys</p>
+            <p>🚀 <strong>Launch:</strong> Spacebar</p>
+            <p>🔄 <strong>Restart:</strong> R Key</p>
+        </div>
+    </div>
+
+    <div id="gameMessage" class="game-message hidden">
+        <div id="messageText"></div>
+        <p style="margin-top: 15px; font-size: 0.8em; opacity: 0.8;">Press SPACE to continue</p>
+    </div>
+
+    <script>
+        class BreakoutGame {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.gameMessage = document.getElementById('gameMessage');
+                this.messageText = document.getElementById('messageText');
+                
+                // Game settings
+                this.paddleWidth = 100;
+                this.paddleHeight = 15;
+                this.ballRadius = 10;
+                this.brickWidth = 75;
+                this.brickHeight = 20;
+                this.brickRows = 8;
+                this.brickCols = 10;
+                
+                // Initialize game
+                this.resetGame();
+                this.setupEventListeners();
+                this.gameLoop();
+            }
+            
+            resetGame() {
+                this.score = 0;
+                this.lives = 3;
+                this.level = 1;
+                this.gameOver = false;
+                this.ballLaunched = false;
+                this.gameWon = false;
+                
+                // Paddle
+                this.paddleX = this.canvas.width / 2 - this.paddleWidth / 2;
+                this.paddleY = this.canvas.height - 50;
+                this.paddleSpeed = 8;
+                
+                // Ball
+                this.ballX = this.canvas.width / 2;
+                this.ballY = this.paddleY - this.ballRadius - 5;
+                this.ballDx = 0;
+                this.ballDy = 0;
+                this.ballSpeed = 5;
+                
+                // Controls
+                this.keys = {};
+                this.mouseX = this.canvas.width / 2;
+                
+                // Create bricks
+                this.createBricks();
+                this.updateUI();
+                this.hideMessage();
+            }
+            
+            createBricks() {
+                this.bricks = [];
+                const startX = (this.canvas.width - (this.brickCols * this.brickWidth)) / 2;
+                const startY = 50;
+                const colors = ['#ff6b6b', '#ffa500', '#ffff00', '#00ff00', '#0000ff', '#8a2be2', '#ff69b4', '#00ffff'];
+                
+                for (let row = 0; row < this.brickRows; row++) {
+                    for (let col = 0; col < this.brickCols; col++) {
+                        const x = startX + col * this.brickWidth;
+                        const y = startY + row * this.brickHeight;
+                        const color = colors[row % colors.length];
+                        
+                        this.bricks.push({
+                            x: x,
+                            y: y,
+                            width: this.brickWidth,
+                            height: this.brickHeight,
+                            color: color,
+                            points: (row + 1) * 10
+                        });
+                    }
+                }
+            }
+            
+            setupEventListeners() {
+                // Keyboard events
+                document.addEventListener('keydown', (e) => {
+                    this.keys[e.code] = true;
+                    
+                    if (e.code === 'Space') {
+                        e.preventDefault();
+                        if (!this.ballLaunched && !this.gameOver) {
+                            this.launchBall();
+                        } else if (this.gameOver) {
+                            this.resetGame();
+                        }
+                    } else if (e.code === 'KeyR') {
+                        this.resetGame();
+                    }
+                });
+                
+                document.addEventListener('keyup', (e) => {
+                    this.keys[e.code] = false;
+                });
+                
+                // Mouse events
+                this.canvas.addEventListener('mousemove', (e) => {
+                    const rect = this.canvas.getBoundingClientRect();
+                    this.mouseX = e.clientX - rect.left;
+                });
+                
+                // Touch events for mobile
+                this.canvas.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    if (!this.ballLaunched && !this.gameOver) {
+                        this.launchBall();
+                    }
+                });
+                
+                this.canvas.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                    const rect = this.canvas.getBoundingClientRect();
+                    this.mouseX = e.touches[0].clientX - rect.left;
+                });
+            }
+            
+            launchBall() {
+                if (!this.ballLaunched) {
+                    const angle = (Math.random() - 0.5) * Math.PI / 2; // Random angle upward
+                    this.ballDx = this.ballSpeed * Math.sin(angle);
+                    this.ballDy = -this.ballSpeed * Math.cos(angle);
+                    this.ballLaunched = true;
+                }
+            }
+            
+            updatePaddle() {
+                // Mouse control
+                this.paddleX = Math.max(0, Math.min(this.canvas.width - this.paddleWidth, 
+                                                   this.mouseX - this.paddleWidth / 2));
+                
+                // Keyboard control
+                if (this.keys['ArrowLeft']) {
+                    this.paddleX = Math.max(0, this.paddleX - this.paddleSpeed);
+                }
+                if (this.keys['ArrowRight']) {
+                    this.paddleX = Math.min(this.canvas.width - this.paddleWidth, 
+                                           this.paddleX + this.paddleSpeed);
+                }
+                
+                // Keep ball on paddle if not launched
+                if (!this.ballLaunched) {
+                    this.ballX = this.paddleX + this.paddleWidth / 2;
+                }
+            }
+            
+            updateBall() {
+                if (!this.ballLaunched || this.gameOver) return;
+                
+                // Move ball
+                this.ballX += this.ballDx;
+                this.ballY += this.ballDy;
+                
+                // Wall collisions
+                if (this.ballX - this.ballRadius <= 0 || this.ballX + this.ballRadius >= this.canvas.width) {
+                    this.ballDx = -this.ballDx;
+                    this.ballX = Math.max(this.ballRadius, Math.min(this.canvas.width - this.ballRadius, this.ballX));
+                }
+                
+                if (this.ballY - this.ballRadius <= 0) {
+                    this.ballDy = -this.ballDy;
+                    this.ballY = this.ballRadius;
+                }
+                
+                // Paddle collision
+                if (this.ballY + this.ballRadius >= this.paddleY &&
+                    this.ballY - this.ballRadius <= this.paddleY + this.paddleHeight &&
+                    this.ballX >= this.paddleX &&
+                    this.ballX <= this.paddleX + this.paddleWidth) {
+                    
+                    const hitPos = (this.ballX - this.paddleX) / this.paddleWidth;
+                    const angle = (hitPos - 0.5) * Math.PI / 3;
+                    const speed = Math.sqrt(this.ballDx ** 2 + this.ballDy ** 2);
+                    
+                    this.ballDx = speed * Math.sin(angle);
+                    this.ballDy = -Math.abs(speed * Math.cos(angle));
+                    this.ballY = this.paddleY - this.ballRadius;
+                }
+                
+                // Ball falls below paddle
+                if (this.ballY > this.canvas.height) {
+                    this.lives--;
+                    if (this.lives <= 0) {
+                        this.gameOver = true;
+                        this.showMessage('💥 GAME OVER! 💥', 'red');
+                    } else {
+                        this.resetBall();
+                        this.showMessage(`💔 Life Lost! ${this.lives} Lives Left`, 'orange');
+                        setTimeout(() => this.hideMessage(), 2000);
+                    }
+                    this.updateUI();
+                }
+                
+                // Brick collisions
+                this.checkBrickCollisions();
+            }
+            
+            checkBrickCollisions() {
+                for (let i = this.bricks.length - 1; i >= 0; i--) {
+                    const brick = this.bricks[i];
+                    
+                    if (this.ballCollidesWithBrick(brick)) {
+                        this.bricks.splice(i, 1);
+                        this.score += brick.points;
+                        
+                        // Calculate bounce direction
+                        const ballCenterX = this.ballX;
+                        const ballCenterY = this.ballY;
+                        const brickCenterX = brick.x + brick.width / 2;
+                        const brickCenterY = brick.y + brick.height / 2;
+                        
+                        const xOverlap = Math.min(ballCenterX + this.ballRadius - brick.x,
+                                                 brick.x + brick.width - (ballCenterX - this.ballRadius));
+                        const yOverlap = Math.min(ballCenterY + this.ballRadius - brick.y,
+                                                 brick.y + brick.height - (ballCenterY - this.ballRadius));
+                        
+                        if (xOverlap < yOverlap) {
+                            this.ballDx = -this.ballDx;
+                        } else {
+                            this.ballDy = -this.ballDy;
+                        }
+                        
+                        this.updateUI();
+                        break;
+                    }
+                }
+                
+                // Check win condition
+                if (this.bricks.length === 0) {
+                    this.nextLevel();
+                }
+            }
+            
+            ballCollidesWithBrick(brick) {
+                return this.ballX + this.ballRadius > brick.x &&
+                       this.ballX - this.ballRadius < brick.x + brick.width &&
+                       this.ballY + this.ballRadius > brick.y &&
+                       this.ballY - this.ballRadius < brick.y + brick.height;
+            }
+            
+            resetBall() {
+                this.ballX = this.paddleX + this.paddleWidth / 2;
+                this.ballY = this.paddleY - this.ballRadius - 5;
+                this.ballDx = 0;
+                this.ballDy = 0;
+                this.ballLaunched = false;
+            }
+            
+            nextLevel() {
+                this.level++;
+                this.ballSpeed += 0.5;
+                this.createBricks();
+                this.resetBall();
+                this.showMessage(`🎉 Level ${this.level - 1} Complete! 🎉`, 'gold');
+                setTimeout(() => this.hideMessage(), 3000);
+                this.updateUI();
+            }
+            
+            showMessage(text, color = 'white') {
+                this.messageText.textContent = text;
+                this.messageText.style.color = color;
+                this.gameMessage.classList.remove('hidden');
+                this.gameMessage.classList.add('pulse');
+            }
+            
+            hideMessage() {
+                this.gameMessage.classList.add('hidden');
+                this.gameMessage.classList.remove('pulse');
+            }
+            
+            updateUI() {
+                document.getElementById('score').textContent = this.score;
+                document.getElementById('lives').textContent = this.lives;
+                document.getElementById('level').textContent = this.level;
+            }
+            
+            draw() {
+                // Clear canvas
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Draw bricks
+                this.bricks.forEach(brick => {
+                    this.ctx.fillStyle = brick.color;
+                    this.ctx.fillRect(brick.x, brick.y, brick.width, brick.height);
+                    this.ctx.strokeStyle = 'white';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.strokeRect(brick.x, brick.y, brick.width, brick.height);
+                });
+                
+                // Draw paddle
+                this.ctx.fillStyle = 'white';
+                this.ctx.fillRect(this.paddleX, this.paddleY, this.paddleWidth, this.paddleHeight);
+                this.ctx.strokeStyle = 'gray';
+                this.ctx.lineWidth = 2;
+                this.ctx.strokeRect(this.paddleX, this.paddleY, this.paddleWidth, this.paddleHeight);
+                
+                // Draw ball
+                this.ctx.beginPath();
+                this.ctx.arc(this.ballX, this.ballY, this.ballRadius, 0, Math.PI * 2);
+                this.ctx.fillStyle = 'white';
+                this.ctx.fill();
+                this.ctx.strokeStyle = 'yellow';
+                this.ctx.lineWidth = 2;
+                this.ctx.stroke();
+                
+                // Draw launch instructions
+                if (!this.ballLaunched && !this.gameOver) {
+                    this.ctx.fillStyle = 'cyan';
+                    this.ctx.font = '20px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText('Press SPACE to launch ball!', this.canvas.width / 2, this.canvas.height / 2);
+                    this.ctx.fillText('Move paddle with mouse or arrow keys', this.canvas.width / 2, this.canvas.height / 2 + 30);
+                }
+            }
+            
+            gameLoop() {
+                if (!this.gameOver) {
+                    this.updatePaddle();
+                    this.updateBall();
+                }
+                
+                this.draw();
+                requestAnimationFrame(() => this.gameLoop());
+            }
+        }
+        
+        // Start the game when page loads
+        window.addEventListener('load', () => {
+            new BreakoutGame();
+        });
+    </script>
+</body>
+</html>
