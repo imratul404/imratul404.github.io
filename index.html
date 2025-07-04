@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mr. Ratul | Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="hero">
+        <div class="hero-content">
+            <img src="https://avatars.githubusercontent.com/u/9919?s=200&v=4" alt="Mr. Ratul Avatar" class="avatar">
+            <div>
+                <h1>Mr. Ratul</h1>
+                <p>Class Nine Student & Junior Programmer</p>
+                <a href="#contact" class="cta-btn">Contact Me</a>
+            </div>
+        </div>
+    </header>
+    <nav>
+        <a href="#about">About Me</a>
+        <a href="#skills">Skills</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+    </nav>
+    <main>
+        <section id="about" class="card">
+            <h2>About Me</h2>
+            <p>Hello! I am <b>Mr. Ratul</b>, a class nine student and junior programmer. I love learning Python, HTML, and CSS, and building cool projects! I enjoy solving problems and making creative things with code.</p>
+        </section>
+        <section id="skills" class="card">
+            <h2>Skills</h2>
+            <div class="skills-list">
+                <div class="skill">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python"/>
+                    <span>Python</span>
+                </div>
+                <div class="skill">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML5"/>
+                    <span>HTML</span>
+                </div>
+                <div class="skill">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS3"/>
+                    <span>CSS</span>
+                </div>
+            </div>
+        </section>
+        <section id="projects" class="card">
+            <h2>Projects</h2>
+            <div class="projects-grid">
+                <div class="project" onclick="showProject('python-game')">
+                    <img class="project-img" src="https://cdn-icons-png.flaticon.com/512/5968/5968350.png" alt="Python Game" />
+                    <h3>My First Python Game</h3>
+                    <p>A simple number guessing game built with Python. <span class="show-code">[Show Code]</span></p>
+                </div>
+                <div class="project" onclick="showProject('calculator')">
+                    <img class="project-img" src="https://cdn-icons-png.flaticon.com/512/992/992651.png" alt="Calculator" />
+                    <h3>Simple Calculator</h3>
+                    <p>A basic calculator made using HTML & CSS. <span class="show-code">[Show Code]</span></p>
+                </div>
+                <div class="project" onclick="showProject('portfolio')">
+                    <img class="project-img" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Portfolio" />
+                    <h3>Personal Portfolio Website</h3>
+                    <p>This modern portfolio website, built with HTML and CSS. <span class="show-code">[Show Code]</span></p>
+                </div>
+                <div class="project" onclick="showProject('color-picker')">
+                    <img class="project-img" src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Color Picker" />
+                    <h3>Color Picker</h3>
+                    <p>A fun tool to pick and copy any color code. <span class="show-code">[Show Code]</span></p>
+                </div>
+                <div class="project" onclick="showProject('quiz-app')">
+                    <img class="project-img" src="https://cdn-icons-png.flaticon.com/512/3135/3135768.png" alt="Quiz App" />
+                    <h3>Quiz App</h3>
+                    <p>A small quiz app to test your knowledge. <span class="show-code">[Show Code]</span></p>
+                </div>
+                <div class="project" onclick="showProject('todo-list')">
+                    <img class="project-img" src="https://cdn-icons-png.flaticon.com/512/1828/1828919.png" alt="To-Do List" />
+                    <h3>To-Do List</h3>
+                    <p>A simple to-do list app to manage your daily tasks. <span class="show-code">[Show Code]</span></p>
+                </div>
+                <div class="project" onclick="showProject('stopwatch')">
+                    <img class="project-img" src="https://cdn-icons-png.flaticon.com/512/992/992700.png" alt="Stopwatch" />
+                    <h3>Stopwatch</h3>
+                    <p>A digital stopwatch made with HTML, CSS, and JavaScript. <span class="show-code">[Show Code]</span></p>
+                </div>
+                <div class="project" onclick="showProject('weather-app')">
+                    <img class="project-img" src="https://cdn-icons-png.flaticon.com/512/1163/1163661.png" alt="Weather App" />
+                    <h3>Weather App</h3>
+                    <p>Shows current weather using a free API. <span class="show-code">[Show Code]</span></p>
+                </div>
+<style>
+.project-img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    margin-bottom: 0.7em;
+    border-radius: 12px;
+    background: #f4f4f9;
+    box-shadow: 0 1px 6px rgba(79,140,255,0.08);
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.project {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-top: 1.2em;
+}
+</style>
+            </div>
+            <div id="project-modal" class="modal" style="display:none;">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal()">&times;</span>
+                    <h3 id="modal-title"></h3>
+                    <div id="modal-output" style="margin-bottom:1.2em;"></div>
+                    <pre><code id="modal-code"></code></pre>
+                </div>
+            </div>
+        </section>
+        <section id="contact" class="card">
+            <h2>Contact</h2>
+            <form class="contact-form" action="mailto:ratul@example.com" method="post" enctype="text/plain">
+                <input type="text" name="name" placeholder="Your Name" required>
+                <input type="email" name="email" placeholder="Your Email" required>
+                <textarea name="message" placeholder="Your Message" required></textarea>
+                <button type="submit">Send</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Mr. Ratul. All rights reserved.</p>
+    </footer>
+</body>
+<script>
+const projectCodes = {
+    'python-game': `# Number Guessing Game\nimport random\nnumber = random.randint(1, 100)\ntries = 0\nwhile True:\n    guess = int(input('Guess a number (1-100): '))\n    tries += 1\n    if guess < number:\n        print('Too low!')\n    elif guess > number:\n        print('Too high!')\n    else:\n        print(f'Correct! Attempts: {tries}')\n        break`,
+    'calculator': `<!-- Simple Calculator HTML -->\n<div class='calc'>\n  <input type='text' id='display' disabled>\n  <div>\n    <button onclick='add(7)'>7</button>\n    <button onclick='add(8)'>8</button>\n    <button onclick='add(9)'>9</button>\n    <button onclick='add(\"+\")'>+</button>\n  </div>\n  <div>\n    <button onclick='add(4)'>4</button>\n    <button onclick='add(5)'>5</button>\n    <button onclick='add(6)'>6</button>\n    <button onclick='add(\"-\")'>-</button>\n  </div>\n  <div>\n    <button onclick='add(1)'>1</button>\n    <button onclick='add(2)'>2</button>\n    <button onclick='add(3)'>3</button>\n    <button onclick='add(\"*\")'>*</button>\n  </div>\n  <div>\n    <button onclick='add(0)'>0</button>\n    <button onclick='add(\"/\")'>/</button>\n    <button onclick='calc()'>=</button>\n    <button onclick='clr()'>C</button>\n  </div>\n</div>\n<script>let disp = document.getElementById('display');function add(val){ disp.value += val; }function calc(){ disp.value = eval(disp.value); }function clr(){ disp.value = ''; }<\/script>`,
+    'portfolio': `<!-- Portfolio Website (index.html) -->\n<!DOCTYPE html>\n<html lang='en'>\n<head>\n  <meta charset='UTF-8'>\n  <title>Mr. Ratul | Portfolio</title>\n  <link rel='stylesheet' href='style.css'>\n</head>\n<body>\n  ...\n</body>\n</html>`,
+    'color-picker': `<!-- Color Picker -->\n<input type='color' id='picker'>\n<input type='text' id='colorCode' readonly>\n<script>const picker = document.getElementById('picker');const code = document.getElementById('colorCode');picker.addEventListener('input', () => {code.value = picker.value;});<\/script>`,
+    'quiz-app': `<!-- Quiz App -->\n<script>const questions = [{q: 'What is 2+2?', a: '4'},{q: 'What is the capital of France?', a: 'Paris'}];let i=0;function ask(){let ans = prompt(questions[i].q);if(ans === questions[i].a){alert('Correct!');}else{alert('Wrong!');}i = (i+1)%questions.length;}ask();<\/script>`,
+    'todo-list': `<!-- To-Do List -->\n<div id='todo'><input id='newtask' placeholder='Add task'><button onclick='addTask()'>Add</button><ul id='tasks'></ul></div>\n<script>function addTask(){var t=document.getElementById('newtask').value;if(t){var li=document.createElement('li');li.textContent=t;document.getElementById('tasks').appendChild(li);document.getElementById('newtask').value='';}}<\/script>`,
+    'stopwatch': `<!-- Stopwatch -->\n<div id='sw'><span id='time'>00:00:00</span><br><button onclick='start()'>Start</button><button onclick='stop()'>Stop</button><button onclick='reset()'>Reset</button></div>\n<script>let t=0,ti;function start(){if(!ti)ti=setInterval(()=>{t++;document.getElementById('time').textContent=new Date(t*1000).toISOString().substr(11,8);},1000);}function stop(){clearInterval(ti);ti=null;}function reset(){t=0;document.getElementById('time').textContent='00:00:00';}<\/script>`,
+    'weather-app': `<!-- Weather App (Demo) -->\n<div id='weather'><input id='city' placeholder='City'><button onclick='getWeather()'>Get Weather</button><div id='result'></div></div>\n<script>function getWeather(){var c=document.getElementById('city').value;document.getElementById('result').textContent='Weather for '+c+': 30°C, Sunny (demo)';}<\/script>`
+};
+function showProject(key) {
+    document.getElementById('project-modal').style.display = 'block';
+    document.getElementById('modal-title').textContent = {
+        'python-game': 'My First Python Game (Python)',
+        'calculator': 'Simple Calculator (HTML/JS)',
+        'portfolio': 'Personal Portfolio Website (HTML)',
+        'color-picker': 'Color Picker (HTML/JS)',
+        'quiz-app': 'Quiz App (JS)',
+        'todo-list': 'To-Do List (HTML/JS)',
+        'stopwatch': 'Stopwatch (HTML/JS)',
+        'weather-app': 'Weather App (HTML/JS)'
+    }[key];
+    document.getElementById('modal-code').textContent = projectCodes[key];
+    // Show output for HTML/JS projects
+    const outputDiv = document.getElementById('modal-output');
+    outputDiv.innerHTML = '';
+    if (key === 'calculator') {
+        outputDiv.innerHTML = `<iframe style="width:100%;min-height:260px;border:1px solid #e0e7ff;border-radius:8px;background:#fff;" sandbox="allow-scripts" srcdoc="<div class='calc' style='max-width:220px;margin:1em auto;font-family:sans-serif;'><input type='text' id='display' disabled style='width:100%;margin-bottom:8px;padding:6px 4px;border-radius:6px;border:1px solid #e0e7ff;'><div><button onclick='add(7)'>7</button><button onclick='add(8)'>8</button><button onclick='add(9)'>9</button><button onclick='add(\'+\')'>+</button></div><div><button onclick='add(4)'>4</button><button onclick='add(5)'>5</button><button onclick='add(6)'>6</button><button onclick='add(\'-\')'>-</button></div><div><button onclick='add(1)'>1</button><button onclick='add(2)'>2</button><button onclick='add(3)'>3</button><button onclick='add(\'*\')'>*</button></div><div><button onclick='add(0)'>0</button><button onclick='add(\'/\')'>/</button><button onclick='calc()'>=</button><button onclick='clr()'>C</button></div></div><script>let disp=document.getElementById('display');function add(val){disp.value+=val;}function calc(){disp.value=eval(disp.value);}function clr(){disp.value='';}<'+'/script>"></iframe>`;
+    } else if (key === 'color-picker') {
+        outputDiv.innerHTML = `<iframe style="width:100%;min-height:90px;border:1px solid #e0e7ff;border-radius:8px;background:#fff;" sandbox="allow-scripts" srcdoc="<input type='color' id='picker'><input type='text' id='colorCode' readonly style='margin-left:10px;'><script>const picker=document.getElementById('picker');const code=document.getElementById('colorCode');picker.addEventListener('input',()=>{code.value=picker.value;});<'+'/script>"></iframe>`;
+    } else if (key === 'quiz-app') {
+        outputDiv.innerHTML = `<iframe style="width:100%;min-height:90px;border:1px solid #e0e7ff;border-radius:8px;background:#fff;" sandbox="allow-scripts" srcdoc="<button onclick='ask()' style='padding:8px 18px;border-radius:6px;background:#4f8cff;color:#fff;border:none;font-weight:bold;'>Start Quiz</button><script>const questions=[{q:'What is 2+2?',a:'4'},{q:'What is the capital of France?',a:'Paris'}];let i=0;function ask(){let ans=prompt(questions[i].q);if(ans===questions[i].a){alert('Correct!');}else{alert('Wrong!');}i=(i+1)%questions.length;}<'+'/script>"></iframe>`;
+    } else if (key === 'portfolio') {
+        outputDiv.innerHTML = `<span style='color:#888;'>You are viewing this portfolio now!</span>`;
+    } else if (key === 'python-game') {
+        outputDiv.innerHTML = `<span style='color:#888;'>Python code: Run this in your Python environment.</span>`;
+    } else if (key === 'todo-list') {
+        outputDiv.innerHTML = `<iframe style="width:100%;min-height:90px;border:1px solid #e0e7ff;border-radius:8px;background:#fff;" sandbox="allow-scripts" srcdoc="<div id='todo' style='max-width:220px;margin:1em auto;font-family:sans-serif;'><input id='newtask' placeholder='Add task' style='width:calc(100% - 80px);padding:6px 4px;border-radius:6px;border:1px solid #e0e7ff;margin-bottom:8px;'><button onclick='addTask()' style='padding:6px 12px;border-radius:6px;background:#4caf50;color:#fff;border:none;'>Add</button><ul id='tasks' style='list-style:none;padding:0;margin:0;'></ul></div><script>function addTask(){var t=document.getElementById('newtask').value;if(t){var li=document.createElement('li');li.textContent=t;document.getElementById('tasks').appendChild(li);document.getElementById('newtask').value='';}}<'+'/script>"></iframe>`;
+    } else if (key === 'stopwatch') {
+        outputDiv.innerHTML = `<iframe style="width:100%;min-height:90px;border:1px solid #e0e7ff;border-radius:8px;background:#fff;" sandbox="allow-scripts" srcdoc="<div id='sw' style='max-width:220px;margin:1em auto;font-family:sans-serif;'><span id='time' style='font-size:1.5em;'>00:00:00</span><br><button onclick='start()' style='padding:6px 12px;border-radius:6px;background:#4caf50;color:#fff;border:none;margin-right:4px;'>Start</button><button onclick='stop()' style='padding:6px 12px;border-radius:6px;background:#f44336;color:#fff;border:none;margin-right:4px;'>Stop</button><button onclick='reset()' style='padding:6px 12px;border-radius:6px;background:#2196f3;color:#fff;border:none;'>Reset</button></div><script>let t=0,ti;function start(){if(!ti)ti=setInterval(()=>{t++;document.getElementById('time').textContent=new Date(t*1000).toISOString().substr(11,8);},1000);}function stop(){clearInterval(ti);ti=null;}function reset(){t=0;document.getElementById('time').textContent='00:00:00';}<'+'/script>"></iframe>`;
+    } else if (key === 'weather-app') {
+        outputDiv.innerHTML = `<iframe style="width:100%;min-height:90px;border:1px solid #e0e7ff;border-radius:8px;background:#fff;" sandbox="allow-scripts" srcdoc="<div id='weather' style='max-width:220px;margin:1em auto;font-family:sans-serif;'><input id='city' placeholder='City' style='width:calc(100% - 80px);padding:6px 4px;border-radius:6px;border:1px solid #e0e7ff;margin-bottom:8px;'><button onclick='getWeather()' style='padding:6px 12px;border-radius:6px;background:#2196f3;color:#fff;border:none;'>Get Weather</button><div id='result' style='margin-top:8px;color:#333;'></div></div><script>function getWeather(){var c=document.getElementById('city').value;document.getElementById('result').textContent='Weather for '+c+': 30°C, Sunny (demo)';}<'+'/script>"></iframe>`;
+    }
+}
+function closeModal() {
+    document.getElementById('project-modal').style.display = 'none';
+}
+window.onclick = function(event) {
+    const modal = document.getElementById('project-modal');
+    if (event.target === modal) closeModal();
+}
+</script>
+</html>
